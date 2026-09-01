@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gym Program</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          green: { active: '#4ade80' },
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: #0f0f0f; color: #f0f0f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .app { display: flex; flex-direction: column-reverse; height: 100dvh; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .tab-active { color: #4ade80 !important; border-top: 3px solid #4ade80; }
+  .thumb { position: relative; flex-shrink: 0; width: 118px; height: 88px; border-radius: 10px; overflow: hidden; background: #1a1a1a; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.2); transform-origin: center center; }
+  .thumb-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; font-weight: 700; text-align: center; padding: 3px 4px; }
+  .exercise:active { opacity: 0.6; }
+  .w-active { color: #4ade80; border: 1.5px solid #4ade80; border-radius: 6px; padding: 2px 8px; font-size: 13px; font-weight: 800; white-space: nowrap; flex-shrink: 0; }
+  .w-num { color: #555; font-size: 11px; font-weight: 600; padding: 0 4px; cursor: pointer; user-select: none; white-space: nowrap; flex-shrink: 1; }
+  .w-arr { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; color: #aaa; font-size: 14px; font-weight: 700; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; flex-shrink: 0; }
+  .w-arr:active { background: #333; color: #fff; }
+  .w-unit { font-size: 9px; color: #4ade80; margin-left: 2px; font-weight: 600; }
+  .copy-btn { font-size: 22px; color: #aaa; cursor: pointer; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); line-height: 1; user-select: none; }
+  .copy-btn.copied { color: #4ade80; background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Tab bar -->
+  <div class="flex flex-shrink-0 bg-[#111] border-t border-[#222]" style="padding-bottom: env(safe-area-inset-bottom,0)">
+    <div class="flex-1 py-3 text-center text-base font-bold text-[#444] cursor-pointer border-t-[3px] border-transparent" onclick="show(0)" id="tab0">Day 1</div>
+    <div class="flex-1 py-3 text-center text-base font-bold text-[#444] cursor-pointer border-t-[3px] border-transparent" onclick="show(1)" id="tab1">Day 2</div>
+    <div class="flex-1 py-3 text-center text-base font-bold text-[#444] cursor-pointer border-t-[3px] border-transparent" onclick="show(2)" id="tab2">Day 3</div>
+  </div>
+
+  <!-- Panels -->
+  <div class="flex-1 overflow-hidden">
+
+    <!-- DAY 1 -->
+    <div class="panel active h-full overflow-y-auto overflow-x-hidden" id="panel0">
+      <div class="px-4 pb-4">
+
+        <!-- Chest Press Machine -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/12/machine-chest-press-resized.png" alt=""><div class="thumb-label">4 × 5</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Chest Press Machine</div>
+            <div class="text-xs text-[#606060] italic mt-1">Bench Press</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="chest-press" data-default="40" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Standing Overhead Press -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/10/barbell-military-press-resized.png" alt=""><div class="thumb-label">3 × 6</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Standing Overhead Press</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="overhead-press" data-default="30" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lat Pulldown -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/05/wide-grip-lat-pull-down-resized.png" alt=""><div class="thumb-label">4 × 6</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Lat Pulldown (Wide Grip)</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="lat-pulldown" data-default="75" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chest Supported Row -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/10/bent-over-one-arm-dumbbell-row-resized.png" alt=""><div class="thumb-label">3 × 8</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Chest Supported Row</div>
+            <div class="text-xs text-[#606060] italic mt-1">Row Machine</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="chest-supported-row" data-default="18" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dumbbell Lateral Raise -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/12/Seated-Dumbbell-Lateral-Raise-resized.png" alt=""><div class="thumb-label">4 × 12–15</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Dumbbell Lateral Raise</div>
+            <div class="text-xs text-[#606060] italic mt-1">Lateral Raise Machine</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="db-lateral-raise" data-default="10" data-even="true">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cross-Body Hammer Curl -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/10/Dumbbell-cross-body-hammer-curl.png" alt=""><div class="thumb-label">4 × 6</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Cross-Body Hammer Curl</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="hammer-curl" data-default="16" data-even="true">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cable Tricep Rope Pushdown -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/05/Triceps-Rope-Pushdown-resized.png" alt=""><div class="thumb-label">4 × 10</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Cable Tricep Rope Pushdown</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="rope-pushdown" data-default="40" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incline Dumbbell Curl -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2017/01/Incline-Dumbbell-Curl-resized.png" alt=""><div class="thumb-label">3 × 10</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Incline Dumbbell Curl</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="incline-db-curl" data-default="8" data-even="true">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="panel h-full overflow-y-auto overflow-x-hidden" id="panel1">
+      <div class="px-4 pb-4">
+
+        <!-- Leg Press -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/05/Sled-45-degree-Leg-Press-resized.png" alt=""><div class="thumb-label">4 × 10–12</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Leg Press</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="leg-press" data-default="72" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weighted Back Extension -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/10/45-degree-hyperextension.png" alt=""><div class="thumb-label">3 × 10–12</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Weighted Back Extension</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="back-extension" data-default="15" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leg Extension -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/05/lever-leg-extension-resized.png" alt=""><div class="thumb-label">3 × 12</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Leg Extension</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="leg-extension" data-default="60" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seated Leg Curl -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/10/seated-leg-curl-resized.png" alt=""><div class="thumb-label">3 × 12</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Seated Leg Curl</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="seated-leg-curl" data-default="40" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cable Lateral Raise -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/11/cable-one-arm-lateral-raise-resized.png" alt=""><div class="thumb-label">3 × 15</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Cable Lateral Raise</div>
+            <div class="text-xs text-[#606060] italic mt-1">Lateral Raise Machine</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="cable-lateral-raise-wed" data-default="25" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Face Pull -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/10/Face-pull-resized.png" alt=""><div class="thumb-label">3 × 15</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Face Pull</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="face-pull" data-default="105" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cable Crunch -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/10/Cable-Kneeling-Crunch-resized.png" alt=""><div class="thumb-label">3 × 15</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Cable Crunch</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="cable-crunch" data-default="70" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="panel h-full overflow-y-auto overflow-x-hidden" id="panel2">
+      <div class="px-4 pb-4">
+
+        <!-- Dumbbell Incline Press -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/11/incline-dumbbell-bench-press-resized.png" alt=""><div class="thumb-label">4 × 8</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Dumbbell Incline Press</div>
+            <div class="text-xs text-[#606060] italic mt-1">Incline Bench Press</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="db-incline-press" data-default="20" data-even="true">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dumbbell Shoulder Press -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/05/Dumbbell-Shoulder-Press-resized.png" alt=""><div class="thumb-label">3 × 10</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Dumbbell Shoulder Press</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="db-shoulder-press" data-default="18" data-even="true">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seated Close-Grip Cable Row -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2017/02/straight-back-seated-cable-row-resized-1.png" alt=""><div class="thumb-label">4 × 10–12</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Seated Close-Grip Cable Row</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="cable-row-fri" data-default="70" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cable Lateral Raise -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/11/cable-one-arm-lateral-raise-resized.png" alt=""><div class="thumb-label">3 × 15</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Cable Lateral Raise</div>
+            <div class="text-xs text-[#606060] italic mt-1">Lateral Raise Machine</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="cable-lateral-raise-fri" data-default="25" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chest-Supported Rear Delt Raise -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2016/05/Dumbbell-Rear-Lateral-Raise-resized.png" alt=""><div class="thumb-label">3 × 15</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Chest-Supported Rear Delt Raise</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="rear-delt-raise" data-default="8" data-even="true">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EZ-Bar Preacher Curl -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2018/07/barbell-preacher-curl-resized.png" alt=""><div class="thumb-label">4 × 10</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">EZ-Bar Preacher Curl</div>
+            <div class="text-xs text-[#606060] italic mt-1">Concentration Curl</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="preacher-curl" data-default="12" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overhead Cable Triceps Ext. -->
+        <div class="exercise flex items-center gap-3 py-3 border-b border-[#1c1c1c] cursor-pointer" onclick="enlarge(this)">
+          <div class="thumb"><img src="https://weighttraining.guide/wp-content/uploads/2018/04/Standing-overhead-one-arm-cable-triceps-extension-resized.png" alt=""><div class="thumb-label">4 × 12</div></div>
+          <div class="flex-1 min-w-0">
+            <div class="ex-name text-base font-bold leading-tight">Overhead Cable Triceps Ext.</div>
+            <div class="inline-flex items-center gap-1.5 mt-2" onclick="event.stopPropagation()" data-key="overhead-triceps" data-default="35" data-even="false">
+              <div class="w-arr" onclick="shiftW(this,-1)">‹</div>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-active"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <span class="w-num" onclick="pickW(this)"></span>
+              <div class="w-arr" onclick="shiftW(this,1)">›</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="hidden fixed inset-0 bg-black/95 z-50 flex-col items-center justify-center p-6 gap-4" onclick="closeLB()">
+  <div class="absolute top-5 right-5 text-2xl text-[#666] cursor-pointer">✕</div>
+  <img id="lb-img" src="" alt="" class="max-w-full max-h-[65vh] rounded-2xl object-contain">
+  <div class="flex items-center gap-3">
+    <span id="lb-name" class="text-lg font-bold text-white text-center"></span>
+    <span class="copy-btn" onclick="copyName(event)">⎘</span>
+  </div>
+  <div class="flex gap-3 w-full">
+    <a id="lb-yt" href="#" target="_blank" onclick="event.stopPropagation()" class="flex-1 text-center py-2 rounded-lg text-xs font-semibold text-[#ff6b6b] bg-red-900/30 border border-red-700/40">YouTube</a>
+    <a id="lb-gg" href="#" target="_blank" onclick="event.stopPropagation()" class="flex-1 text-center py-2 rounded-lg text-xs font-semibold text-[#7ab3ff] bg-blue-900/30 border border-blue-700/40">Google</a>
+  </div>
+</div>
+
+<script>
+  // ── Tabs ──
+  function show(i) {
+    [0,1,2].forEach(j => {
+      document.getElementById('tab'+j).classList.toggle('tab-active', j===i);
+      document.getElementById('panel'+j).classList.toggle('active', j===i);
+    });
+    localStorage.setItem('activeTab', i);
+  }
+  (function(){ const s = localStorage.getItem('activeTab'); if(s) show(parseInt(s)); })();
+
+  // ── Weight logic ──
+  function stepOf(row) { return row.dataset.even === 'true' ? 2 : 1; }
+
+  function renderRow(row, val) {
+    val = Math.round(val);
+    const s = stepOf(row);
+    if (row.dataset.even === 'true' && val % 2 !== 0) val = Math.round(val/2)*2;
+    if (val < 0) val = 0;
+    localStorage.setItem('weight_' + row.dataset.key, val);
+    const nums = row.querySelectorAll('.w-num');
+    nums[0].textContent = val - s*2;
+    nums[1].textContent = val - s;
+    nums[2].textContent = val + s;
+    nums[3].textContent = val + s*2;
+    const active = row.querySelector('.w-active');
+    active.innerHTML = val + '<span class="w-unit">kg</span>';
+    // store current value on row
+    row._val = val;
+  }
+
+  function initRow(row) {
+    const saved = localStorage.getItem('weight_' + row.dataset.key);
+    const val = saved !== null ? parseFloat(saved) : parseFloat(row.dataset.default);
+    renderRow(row, val);
+  }
+
+  function shiftW(btn, dir) {
+    const row = btn.closest('[data-key]');
+    const s = stepOf(row);
+    renderRow(row, (row._val || parseFloat(row.dataset.default)) + dir * s * 3);
+  }
+
+  function pickW(numEl) {
+    const row = numEl.closest('[data-key]');
+    renderRow(row, parseFloat(numEl.textContent));
+  }
+
+  document.querySelectorAll('[data-key]').forEach(initRow);
+
+  // ── Lightbox ──
+  function enlarge(ex) {
+    const src = ex.querySelector('img').src;
+    const name = ex.querySelector('.ex-name').textContent;
+    const q = encodeURIComponent(name + ' exercise');
+    document.getElementById('lb-img').src = src;
+    document.getElementById('lb-name').textContent = name;
+    document.getElementById('lb-yt').href = 'https://www.youtube.com/results?search_query=' + q;
+    document.getElementById('lb-gg').href = 'https://www.google.com/search?q=' + q;
+    document.getElementById('lightbox').classList.remove('hidden');
+    document.getElementById('lightbox').classList.add('flex');
+  }
+
+  function closeLB() {
+    document.getElementById('lightbox').classList.add('hidden');
+    document.getElementById('lightbox').classList.remove('flex');
+  }
+
+  function copyName(e) {
+    e.stopPropagation();
+    navigator.clipboard.writeText(document.getElementById('lb-name').textContent).then(() => {
+      e.target.classList.add('copied');
+      setTimeout(() => e.target.classList.remove('copied'), 1500);
+    });
+  }
+</script>
+</body>
+</html>
