@@ -35,5 +35,3 @@ npm run dev
 ## Others
 
 - 3 days per week, strength + aesthetics focus (shoulders and arms).
-- Gym: FitSevenEleven
-- Phone used to view the app: Pixel 10
