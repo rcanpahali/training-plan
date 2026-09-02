@@ -1,0 +1,192 @@
+@import 'tailwindcss';
+
+:root {
+  --bg: #14171a;
+  --bg-raised: #1a1e22;
+  --line: #262b30;
+  --text: #edefef;
+  --text-muted: #9aa1a8;
+  --text-faint: #565c63;
+  --accent: #e5342b;
+  --accent-soft: rgba(229, 52, 43, 0.16);
+  --day-blue: #3b7de8;
+  --day-gold: #e3b93a;
+  --day-green: #55a66b;
+  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  overscroll-behavior-y: none;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bottom day tabs */
+.tab-btn {
+  position: relative;
+  color: var(--text-faint);
+  border-top: 3px solid transparent;
+}
+
+.tab-btn.active {
+  color: var(--text);
+  border-top-color: var(--tab-accent, var(--accent));
+}
+
+.tab-dot {
+  background: var(--tab-accent, var(--accent));
+}
+
+/* Exercise thumbnail */
+.thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 84px;
+  height: 84px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-raised);
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.2);
+  transform-origin: center center;
+}
+
+.sets-badge {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  background: rgba(20, 23, 26, 0.88);
+  border: 1px solid rgba(237, 239, 239, 0.14);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.exercise-row:active {
+  background: var(--bg-raised);
+}
+
+/* Weight picker */
+.w-picker-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+}
+
+.w-picker-scroll {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.w-picker-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.w-spacer {
+  flex: 0 0 130px;
+}
+
+.w-item {
+  flex: 0 0 56px;
+  text-align: center;
+  scroll-snap-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    opacity 0.15s,
+    color 0.15s,
+    font-size 0.15s;
+}
+
+.w-picker-indicator {
+  position: absolute;
+  left: 50%;
+  top: 3px;
+  bottom: 3px;
+  width: 60px;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  background: var(--accent-soft);
+  pointer-events: none;
+}
+
+.w-step-btn {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  user-select: none;
+}
+
+.w-step-btn:active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.copy-btn {
+  font-size: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  line-height: 1;
+  user-select: none;
+}
+
+.copy-btn.copied {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}

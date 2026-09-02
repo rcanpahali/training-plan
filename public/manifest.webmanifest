@@ -1,0 +1,14 @@
+{
+  "name": "Training Plan",
+  "short_name": "Training Plan",
+  "description": "Personal gym program and weight log",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#14171a",
+  "theme_color": "#14171a",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
