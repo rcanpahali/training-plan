@@ -10,7 +10,7 @@ interface DayPanelProps {
 export default function DayPanel({ day, active, onEnlarge }: DayPanelProps) {
   return (
     <div className={`h-full overflow-y-auto overflow-x-hidden ${active ? '' : 'hidden'}`}>
-      <div className="px-4 pb-4" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0) + 12px)' }}>
+      <div className="px-4 pb-4" style={{ paddingTop: 'calc(var(--safe-top) + 12px)' }}>
         {day.exercises.map((exercise) => (
           <ExerciseRow key={exercise.key} exercise={exercise} active={active} onEnlarge={onEnlarge} />
         ))}

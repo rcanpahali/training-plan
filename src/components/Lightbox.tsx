@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { useState, type MouseEvent } from 'react'
 import type { Exercise } from '../data/exercises'
 
@@ -5,6 +6,24 @@ interface LightboxProps {
   exercise: Exercise | null
   onClose: () => void
 }
+
+const CopyBtn = styled.span`
+  font-size: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  line-height: 1;
+  user-select: none;
+
+  &.copied {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+`
 
 export default function Lightbox({ exercise, onClose }: LightboxProps) {
   const [copied, setCopied] = useState(false)
@@ -28,16 +47,20 @@ export default function Lightbox({ exercise, onClose }: LightboxProps) {
     >
       <div
         className="absolute right-4 flex items-center justify-center w-11 h-11 rounded-full bg-[var(--bg-raised)] border border-[var(--line)] text-xl text-[var(--text-muted)] cursor-pointer"
-        style={{ top: 'calc(env(safe-area-inset-top, 0) + 16px)' }}
+        style={{ top: 'calc(var(--safe-top) + 16px)' }}
       >
         ✕
       </div>
-      <img src={exercise.image} alt="" className="max-w-full max-h-[60vh] rounded-2xl object-contain" />
+      <img
+        src={exercise.image}
+        alt=""
+        className="lightbox-img max-w-full max-h-[60vh] rounded-2xl object-contain"
+      />
       <div className="flex items-center gap-3">
         <span className="text-lg font-semibold text-[var(--text)] text-center">{exercise.name}</span>
-        <span className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copyName}>
+        <CopyBtn className={copied ? 'copied' : ''} onClick={copyName}>
           ⎘
-        </span>
+        </CopyBtn>
       </div>
       <div className="flex gap-3 w-full">
         <a
